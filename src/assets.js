@@ -1,1 +1,0 @@
-export const background = require('../assets/addbtn.png')

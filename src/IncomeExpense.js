@@ -9,29 +9,25 @@ import {
   SafeAreaView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 class IncomeExpense extends Component {
   constructor(props) {
     super(props);
     this.state = {
       name: '',
       cost: '',
-      description: '',
+    
     };
   }
 
   handleAddIncome = async () => {
-    const { name, cost, description } = this.state;
-  
-    const newTodo = { Name: name, Cost: cost, Description: description };
+    const { name, cost } = this.state;
+    const newTodo = { Name: name, Cost: cost };
     try {
-     
       let todos = await AsyncStorage.getItem('todos');
       todos = todos ? JSON.parse(todos) : [];
-
       todos.push(newTodo);
-      
       await AsyncStorage.setItem('todos', JSON.stringify(todos));
-      
       this.props.navigation.navigate('Transaction');
     } catch (error) {
       console.error('Error adding todo:', error);
@@ -39,7 +35,9 @@ class IncomeExpense extends Component {
   };
 
   render() {
-    const { name, cost, description } = this.state;
+    const { name, cost } = this.state;
+    const isInputFilled = name !== '' && cost !== '';
+
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
@@ -76,17 +74,23 @@ class IncomeExpense extends Component {
             onChangeText={(text) => this.setState({ cost: text })}
           />
           <TextInput
-            placeholder='Enter Description'
+          placeholder='description'
             placeholderTextColor={'grey'}
             style={styles.inputStyle}
-            value={description}
-            onChangeText={(text) => this.setState({ description: text })}
+    
           />
-          <TouchableOpacity style={styles.btnStyle} onPress={this.handleAddIncome}>
+          <TouchableOpacity
+            style={[styles.btnStyle, !isInputFilled && { backgroundColor: 'grey' }]} 
+          
+            onPress={isInputFilled ? this.handleAddIncome : null} 
+           
+            disabled={!isInputFilled} 
+            
+          >
             <Text style={styles.btnText}>Add Income</Text>
           </TouchableOpacity>
         </View>
-      </SafeAreaView >
+      </SafeAreaView>
     );
   }
 }
